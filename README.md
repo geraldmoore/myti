@@ -16,7 +16,7 @@
 
 1. **Clone the repository**  
    ```bash
-   git clone <path-to-github-repo>
+   git clone git@github.com:geraldmoore/myti.git
    cd myti
    ```
 
