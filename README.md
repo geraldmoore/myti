@@ -26,13 +26,14 @@
    ```
 
 3. **Configure environment variables**  
-   Create a `.env` file in the project root with the following contents:  
+   Create a `.env` file in the project root with the following and fill in the values:  
    ```bash
-   AWS_PROFILE=your-aws-profile
-   AWS_REGION=your-aws-region
-   MAPBOX_ACCESS_TOKEN=your-mapbox-token
+   AWS_PROFILE=
+   AWS_REGION=
+   MAPBOX_ACCESS_TOKEN=
    ```  
-   You may obtain a free Mapbox access token by registering at [Mapbox](https://www.mapbox.com/) and following [these instructions](https://docs.mapbox.com/help/glossary/access-token/).
+   You may obtain a free Mapbox access token by registering at [Mapbox](https://www.mapbox.com/) and following [these instructions](https://docs.mapbox.com/help/glossary/access-token/). Configuring the AWS profile and region is only
+   necessary if your data is stored on S3. Otherwise you can leave these empty.
 
 ## Data Preparation
 
