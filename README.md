@@ -4,7 +4,11 @@
 
 ## Summary
 
-MyTi is a web application for hosting and visualizing raster Cloud Optimized GeoTIFFs (COGs). It leverages MapBox for high-resolution base layers and supports display and caching of geospatial raster datasets. 
+MyTi is a web application for hosting and visualizing raster Cloud Optimized GeoTIFFs (COGs). It leverages MapBox for high-resolution base layers and supports display and caching of geospatial raster datasets.
+
+<div style="text-align: center;">
+  <img src="assets/web-app.png" alt="Web app" width="300"/>
+</div>
 
 ## Installation
 
