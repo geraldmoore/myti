@@ -10,8 +10,8 @@ init_aws_session()
 api_key_query = APIKeyQuery(name="access_token", auto_error=False)
 
 
-def token_validation(access_token: str = Security(api_key_query)):
-    """Token validation."""
+def aws_token_validation(access_token: str = Security(api_key_query)):
+    """AWS token validation."""
     if not access_token:
         raise HTTPException(status_code=401, detail="Missing `access_token`")
 
@@ -21,7 +21,8 @@ def token_validation(access_token: str = Security(api_key_query)):
     return True
 
 
-private_router = APIRouter(dependencies=[Depends(token_validation)])
+# AWS Auth COG tile router
+private_router = APIRouter(dependencies=[Depends(aws_token_validation)])
 private_cog = TilerFactory(router_prefix="private/cog", router=private_router)
 
 router = private_cog.router

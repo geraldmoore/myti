@@ -1,10 +1,7 @@
-from pathlib import Path
-from titiler.mosaic.factory import MosaicTilerFactory
 from fastapi import APIRouter, HTTPException
-from fastapi.responses import FileResponse
-import json
+from titiler.mosaic.factory import MosaicTilerFactory
 
-from .. import utils, backend
+from .. import backend, utils
 from ..config import get_config
 
 # Mosaic tiler

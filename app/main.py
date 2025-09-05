@@ -14,6 +14,7 @@ config = get_config()
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    """Runs on FastAPI app startup and shutdown."""
     name = config.name
     cache_dir = config.cache_dir
     mosaic_path = f"{cache_dir}/{name}_mosaic.json"

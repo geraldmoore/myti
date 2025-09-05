@@ -1,5 +1,7 @@
 import os
+
 from boto3 import Session
+
 from .settings import get_settings
 
 
@@ -8,7 +10,7 @@ def init_aws_session(
     region_name: str | None = None,
 ) -> Session:
     """
-    Initialize AWS session and set environment variables for boto3/other tools.
+    Initialise AWS session and set environment variables.
     """
     if not profile_name and not region_name:
         settings = get_settings()
@@ -29,7 +31,7 @@ def init_aws_session(
 
 
 def get_s3_client(session: Session | None = None):
-    """Return an S3 client from session (or default session)."""
+    """Return an S3 client."""
     if session is None:
         session = Session()
     return session.client("s3")
