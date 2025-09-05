@@ -37,7 +37,7 @@
 
 ## Data Preparation
 
-To ensure optimal performance and visual quality:
+The app uses TiTiler to serve the rasters. For optimum performance and visualisation, consider the following:
 
 - **Use COGs:** Convert raster files to Cloud Optimised GeoTIFFs using tools such as `rasterio` or `GDAL`.  
 - **Reprojection:** TiTiler renders in Web Mercator (`EPSG:3857`). For multiple tiles, merge and reproject them together to prevent misalignment.  
@@ -71,14 +71,14 @@ port: 8080
    This generates a `{name}-mosaic.json` index in the cache directory and starts the TiTiler web server.
 
 2. **Access the application**  
-   Open your browser at `http://<host>:<port>` to view the web application.  
-   You may toggle between base layers and raster overlays as required.
+   Open your browser at `http://<host>:<port>` to view the application.  
+   Use the control panel in the top left to toggle between base layers and raster overlay.
 
 3. **Caching behaviour**  
-   - Cached data enables rapid reloading. Delete the cache directory to regenerate data with updated rasters.  
-   - Changing the `name` field in `config.yaml` will create a new dataset cache.  
-   - Reusing a previous dataset name will load directly from its existing cache.  
+   - Intermediate files are cached to enable faster reloading. Delete the cache directory to regenerate data with updated rasters and datasets.  
+   - Changing the `name` field in `config.yaml` will create a new cache for that dataset.  
+   - Reusing a previous dataset name in the config will load directly from the cache if it exists.  
 
 ## Additional Resources
 
-- The provided `workspace.ipynb` notebook contains general-purpose code snippets to support data formatting and conversion workflows.
+- The provided `workspace.ipynb` notebook contains general-purpose code snippets for data formatting and conversion.
