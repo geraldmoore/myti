@@ -9,7 +9,7 @@
 **MyTi** is a web application for hosting and visualising raster **Cloud Optimised GeoTIFFs (COGs)**. It integrates with **Mapbox** for high-resolution basemaps and provides efficient display, caching, and interaction with geospatial raster datasets.
 
 <p align="center">
-  <img src="assets/web-app.png" alt="Web application" width="400"/>
+  <img src="assets/web-app.png" alt="Web application" width="500"/>
 </p>
 
 ## Installation
