@@ -1,17 +1,17 @@
-# MiTi README
+# MyTi README
 
-<img src="assets/MiTi logo.png" alt="MiTi logo" width="150"/>
+<img src="assets/myti-logo.png" alt="MyTi logo" width="150"/>
 
 ## Summary
 
-MiTi is a web application for hosting and visualizing raster Cloud Optimized GeoTIFFs (COGs). It leverages MapBox for high-resolution base layers and supports display and caching of geospatial raster datasets. 
+MyTi is a web application for hosting and visualizing raster Cloud Optimized GeoTIFFs (COGs). It leverages MapBox for high-resolution base layers and supports display and caching of geospatial raster datasets. 
 
 ## Installation
 
 1. Clone the repository:
    ```
    git clone <path-to-github-repo>
-   cd miti
+   cd myti
    ```
 
 2. Set up the Python environment:
