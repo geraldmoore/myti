@@ -1,0 +1,6 @@
+name: denmark-local
+raster_dir: "/Users/geraldmoore/Downloads/denmark_2024_pca_cog_scaled_webmercator_uint8"
+# raster_dir: "s3://agreena-data-science/tessera/denmark_2024_pca_cog_scaled_test"
+cache_dir: "./cache"
+host: "127.0.0.1"
+port: 8080

@@ -1,0 +1,180 @@
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Raster Viewer</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://api.mapbox.com/mapbox-gl-js/v3.0.0/mapbox-gl.css" rel="stylesheet" />
+    <script src="https://api.mapbox.com/mapbox-gl-js/v3.0.0/mapbox-gl.js"></script>
+    <style>
+        body { margin: 0; padding: 0; }
+        #map { position: absolute; top: 0; bottom: 0; width: 100%; }
+        .info {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 6px 8px;
+            font: 14px/16px Arial, Helvetica, sans-serif;
+            background: rgba(255,255,255,0.9);
+            box-shadow: 0 0 15px rgba(0,0,0,0.2);
+            border-radius: 5px;
+            z-index: 1;
+        }
+        .controls {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: white;
+            padding: 8px;
+            border-radius: 5px;
+            font: 14px Arial, sans-serif;
+            box-shadow: 0 0 5px rgba(0,0,0,0.3);
+            z-index: 1;
+        }
+        .controls label {
+            display: block;
+            margin-bottom: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+    <div class="controls">
+        <strong>Base Layer</strong><br>
+        <label><input type="radio" name="basemap" value="mapbox/standard" checked> Standard</label>
+        <label><input type="radio" name="basemap" value="mapbox/standard-satellite"> Satellite</label>
+        <hr>
+        <strong>Projection</strong><br>
+        <label><input type="radio" name="projection" value="mercator" checked> Web Mercator</label>
+        <label><input type="radio" name="projection" value="globe"> Globe</label>
+        <hr>
+        <label><input type="checkbox" id="mosaicToggle" checked>Rasters</label>
+    </div>
+    <script>
+        var mapboxAccessToken = "{{ mapbox_access_token }}";
+
+        function addMosaic(info, mosaicUrl) {
+            if (!map.getSource('mosaic')) {
+                map.addSource('mosaic', {
+                    type: 'raster',
+                    tiles: [mosaicUrl + '?assets=all'],
+                    tileSize: 256
+                });
+
+                map.addLayer({
+                    id: 'mosaic-layer',
+                    type: 'raster',
+                    source: 'mosaic',
+                    paint: { 'raster-opacity': 1.0 }
+                });
+            }
+            map.setLayoutProperty(
+                'mosaic-layer',
+                'visibility',
+                document.getElementById('mosaicToggle').checked ? 'visible' : 'none'
+            );
+
+            // Fit to bounds if available in info
+            if (info && info.bounds) {
+                map.fitBounds([
+                    [info.bounds[0], info.bounds[1]], // SW lng, lat
+                    [info.bounds[2], info.bounds[3]]  // NE lng, lat
+                ]);
+            }
+        }
+
+        mapboxgl.accessToken = mapboxAccessToken;
+        var map = new mapboxgl.Map({
+            container: 'map',
+            style: 'mapbox://styles/mapbox/standard',
+            projection: 'mercator' // Default projection
+            // center: [10.5, 56.0],
+            // zoom: 7
+        });
+
+        var mosaicUrl = window.location.origin + '/mosaic/tiles/WebMercatorQuad/{z}/{x}/{y}';
+        var mosaicInfo = null;
+
+        map.on('load', () => {
+            fetch(window.location.origin + '/create-mosaic', { method: 'POST' })
+                .then(response => {
+                    if (!response.ok) {
+                        return fetch(window.location.origin + '/create-mosaic')
+                            .then(() => response);
+                    }
+                    return response;
+                })
+                .then(() => fetch(window.location.origin + '/mosaic/info'))
+                .then(response => response.json())
+                .then(info => {
+                    mosaicInfo = info;
+                    addMosaic(mosaicInfo, mosaicUrl);
+
+                    // Use mosaic info for initial map view
+                    if (info.bounds) {
+                        map.fitBounds([
+                            [info.bounds[0], info.bounds[1]],
+                            [info.bounds[2], info.bounds[3]]
+                        ]);
+                    } else if (info.center && info.minzoom) {
+                        map.setCenter(info.center);
+                        map.setZoom(info.minzoom);
+                    }
+
+                    infoBox.innerHTML = '<h4>Raster Mosaic</h4>Data loaded';
+                })
+                .catch(error => {
+                    console.error('Error loading mosaic:', error);
+                });
+        });
+
+        document.getElementById('mosaicToggle').addEventListener('change', function(e) {
+            if (map.getLayer('mosaic-layer')) {
+                map.setLayoutProperty(
+                    'mosaic-layer',
+                    'visibility',
+                    e.target.checked ? 'visible' : 'none'
+                );
+            }
+        });
+
+        document.querySelectorAll('input[name="basemap"]').forEach(radio => {
+            radio.addEventListener('change', function(e) {
+                var newStyle = 'mapbox://styles/' + e.target.value;
+                var currentCenter = map.getCenter();
+                var currentZoom = map.getZoom();
+
+                map.setStyle(newStyle);
+
+                map.once('styledata', () => {
+                    if (mosaicInfo) {
+                        addMosaic(mosaicInfo, mosaicUrl);
+                    }
+                    map.setCenter(currentCenter);
+                    map.setZoom(currentZoom);
+                });
+            });
+        });
+
+        // Handle projection changes
+        document.querySelectorAll('input[name="projection"]').forEach(radio => {
+            radio.addEventListener('change', function(e) {
+                var newProjection = e.target.value;
+                map.setProjection(newProjection);
+                
+                // Re-fit to bounds if available in mosaicInfo
+                if (mosaicInfo && mosaicInfo.bounds) {
+                    map.fitBounds([
+                        [mosaicInfo.bounds[0], mosaicInfo.bounds[1]], // SW lng, lat
+                        [mosaicInfo.bounds[2], mosaicInfo.bounds[3]]  // NE lng, lat
+                    ]);
+                } else if (mosaicInfo && mosaicInfo.center && mosaicInfo.minzoom) {
+                    map.setCenter(mosaicInfo.center);
+                    map.setZoom(mosaicInfo.minzoom);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
